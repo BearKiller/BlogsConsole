@@ -9,27 +9,53 @@ string path = Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}n
 var logger = LogManager.LoadConfiguration(path).GetCurrentClassLogger();
 logger.Info("Program started");
 
+
 try
 {
+    char option;
+    do {
+        var db = new BloggingContext();
+        Console.WriteLine("Enter your selection:");
+        Console.WriteLine("1) Display all blogs");
+        Console.WriteLine("2) Add Blog");
+        Console.WriteLine("3) Create Post");
+        Console.WriteLine("4) Display Posts");
+        Console.WriteLine("Enter 'q' to quit");
+        option = Inputs.GetChar("> ", new char[] {'1', '2', '3', '4', 'q'});
+        switch(option) {
 
-    // Create and save a new Blog
-    Console.Write("Enter a name for a new Blog: ");
-    var name = Console.ReadLine();
+            case '1':
+            // Display all Blogs from the database
+            var query = db.Blogs.OrderBy(b => b.Name);
 
-    var blog = new Blog { Name = name };
+            Console.WriteLine("All blogs in the database:");
+            foreach (var item in query)
+            {
+                Console.WriteLine(item.Name);
+            }
+            break;
 
-    var db = new BloggingContext();
-    db.AddBlog(blog);
-    logger.Info("Blog added - {name}", name);
+            case '2':
+            // Create and save a new Blog
+            Console.Write("Enter a name for a new Blog: ");
+            var name = Console.ReadLine();
 
-    // Display all Blogs from the database
-    var query = db.Blogs.OrderBy(b => b.Name);
+            var blog = new Blog { Name = name };
 
-    Console.WriteLine("All blogs in the database:");
-    foreach (var item in query)
-    {
-        Console.WriteLine(item.Name);
+
+            db.AddBlog(blog);
+            logger.Info("Blog added - {name}", name);
+            break;
+
+            case '3':
+            // Create a blog post
+            break;
+
+            case '4':
+            // Display blog posts
+            break;
     }
+    } while (option == '1' || option == '2' || option == '3' || option == '4');
 }
 catch (Exception ex)
 {
