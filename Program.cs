@@ -1,5 +1,6 @@
 ﻿using NLog;
 using System.Linq;
+using Helper;
 
 // See https://aka.ms/new-console-template for more information
 string path = Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}nlog.config";
