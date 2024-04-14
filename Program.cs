@@ -44,8 +44,7 @@ try
             Console.Clear();
             logger.Info("User choice - 2) Add blog");
             // Create and save a new Blog
-            Console.Write("Enter a name for a new Blog: ");
-            var name = Console.ReadLine();
+            var name = Inputs.GetString("Enter a name for a new Blog: ");
 
             var blog = new Blog { Name = name };
 
