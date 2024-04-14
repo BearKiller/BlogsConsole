@@ -16,6 +16,7 @@ try
     do {
         var db = new BloggingContext();
         var blogQuery = db.Blogs.OrderBy(b => b.Name);
+        var postQuery = db.Posts.OrderBy(p => p.Title).ThenBy(p => p.Content);
         List<int> blogIDs = new List<int>();
         Console.WriteLine("\nEnter your selection:");
         Console.WriteLine("1) Display all blogs");
@@ -57,6 +58,7 @@ try
             case '3':
             Console.Clear();
             logger.Info("User choice - 3) Create Post");
+            blogIDs.Clear();
             // Create a blog post
             Console.Clear();
             Console.WriteLine("Select the blog you would like to post to: ");
@@ -84,6 +86,7 @@ try
                 BlogId = blogChoice,
             };
             db.AddPost(post);
+            logger.Info("Post added - {postName}", postName);
             break; 
 
 
@@ -91,7 +94,50 @@ try
             case '4':
             Console.Clear();
             logger.Info("User choice - 4) Display Posts");
+            blogIDs.Clear();
+            IEnumerable<Post>? queryBlogPosts = null;
             // Display blog posts
+            Console.WriteLine("Select the blog's posts to display: ");
+            Console.WriteLine("0) Posts from all blogs");
+            foreach (var item in blogQuery) {
+                Console.WriteLine(item.BlogID + ") Posts from " + item.Name);
+                blogIDs.Add(item.BlogID);
+                }
+
+            int postChoice = -1;
+            bool postChoiceSuccess = false;
+            while (!postChoiceSuccess) {
+                postChoice = Inputs.GetInt("> ");
+                if (blogIDs.Contains(postChoice) || postChoice == 0) {
+                    postChoiceSuccess = true;
+                } else {
+                    logger.Error("Input beyond range of blogIDs.");
+                }
+            }
+
+            if (postChoice == 0) {
+                var blogs = blogQuery.ToList();
+                var posts = postQuery.ToList();
+                Console.WriteLine(posts.Count() + " posts returned.");
+                foreach (var item in postQuery) {
+                    var blogNameResult = blogs.FirstOrDefault(b => b.BlogID == item.BlogId)?.Name;
+                    Console.WriteLine("Blog: " + blogNameResult);
+                    Console.WriteLine("Title: " + item.Title);
+                    Console.WriteLine("Content: " + item.Content);
+                } 
+            } else {
+                var blogs = blogQuery.ToList();
+                var posts = postQuery.ToList();
+                var blogQueryResult = blogs.Where(b => b.BlogID == postChoice).FirstOrDefault().Name;
+                var postQueryResult = posts.Where(p => p.BlogId == postChoice).ToList();
+                Console.WriteLine(postQueryResult.Count() + " posts returned.");
+                Console.WriteLine("Blog: " + blogQueryResult);
+                foreach (var item in postQueryResult) {
+                    Console.WriteLine("Title: " + item.Title);
+                    Console.WriteLine("Content: " + item.Content);
+                }
+            }
+
             break;
 
         }
