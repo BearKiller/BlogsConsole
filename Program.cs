@@ -65,7 +65,7 @@ try
                 blogIDs.Add(item.BlogID);
                 }
 
-            int blogChoice;
+            int blogChoice = 0;
             bool blogChoiceSuccess = false;
             while (!blogChoiceSuccess) {
                 blogChoice = Inputs.GetInt("> ");
@@ -76,7 +76,15 @@ try
                 }
             }
 
-            break;
+            var postName = Inputs.GetString("Enter a post title: ");
+            var postContent = Inputs.GetString("Enter post content: ");
+            var post = new Post {
+                Title = postName,
+                Content = postContent,
+                BlogId = blogChoice,
+            };
+            db.AddPost(post);
+            break; 
 
 
 
