@@ -15,8 +15,8 @@ try
     char option;
     do {
         var db = new BloggingContext();
-        var blogQuery = db.Blogs.OrderBy(b => b.Name);
-        var postQuery = db.Posts.OrderBy(p => p.Title).ThenBy(p => p.Content);
+        var blogQuery = db.Blogs.OrderBy(b => b.BlogID);
+        var postQuery = db.Posts.OrderBy(p => p.PostId).ThenBy(p => p.Title);
         List<int> blogIDs = new List<int>();
         Console.WriteLine("\nEnter your selection:");
         Console.WriteLine("1) Display all blogs");
@@ -34,9 +34,10 @@ try
             logger.Info("User choice - 1) Display all blogs");
             // Display all Blogs from the database
 
-            Console.WriteLine("All blogs in the database:");
-            foreach (var item in blogQuery) {
-                Console.WriteLine(item.BlogID + ") " + item.Name);
+            var blogsList = blogQuery.ToList();
+            Console.WriteLine(blogsList.Count() + " blogs returned");
+            foreach (var item in blogsList) {
+                Console.WriteLine(" " + item.Name);
             } break;
 
 
@@ -95,7 +96,6 @@ try
             Console.Clear();
             logger.Info("User choice - 4) Display Posts");
             blogIDs.Clear();
-            IEnumerable<Post>? queryBlogPosts = null;
             // Display blog posts
             Console.WriteLine("Select the blog's posts to display: ");
             Console.WriteLine("0) Posts from all blogs");
