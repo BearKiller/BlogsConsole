@@ -15,7 +15,9 @@ try
     char option;
     do {
         var db = new BloggingContext();
-        Console.WriteLine("Enter your selection:");
+        var blogQuery = db.Blogs.OrderBy(b => b.Name);
+        List<int> blogIDs = new List<int>();
+        Console.WriteLine("\nEnter your selection:");
         Console.WriteLine("1) Display all blogs");
         Console.WriteLine("2) Add Blog");
         Console.WriteLine("3) Create Post");
@@ -24,37 +26,68 @@ try
         option = Inputs.GetChar("> ", new char[] {'1', '2', '3', '4', 'q'});
         switch(option) {
 
+
+
             case '1':
+            Console.Clear();
+            logger.Info("User choice - 1) Display all blogs");
             // Display all Blogs from the database
-            var query = db.Blogs.OrderBy(b => b.Name);
 
             Console.WriteLine("All blogs in the database:");
-            foreach (var item in query)
-            {
-                Console.WriteLine(item.Name);
-            }
-            break;
+            foreach (var item in blogQuery) {
+                Console.WriteLine(item.BlogID + ") " + item.Name);
+            } break;
+
+
 
             case '2':
+            Console.Clear();
+            logger.Info("User choice - 2) Add blog");
             // Create and save a new Blog
             Console.Write("Enter a name for a new Blog: ");
             var name = Console.ReadLine();
 
             var blog = new Blog { Name = name };
 
-
             db.AddBlog(blog);
             logger.Info("Blog added - {name}", name);
             break;
 
+
+
             case '3':
+            Console.Clear();
+            logger.Info("User choice - 3) Create Post");
             // Create a blog post
+            Console.Clear();
+            Console.WriteLine("Select the blog you would like to post to: ");
+            foreach (var item in blogQuery) {
+                Console.WriteLine(item.BlogID + ") " + item.Name);
+                blogIDs.Add(item.BlogID);
+                }
+
+            int blogChoice;
+            bool blogChoiceSuccess = false;
+            while (!blogChoiceSuccess) {
+                blogChoice = Inputs.GetInt("> ");
+                if (blogIDs.Contains(blogChoice)) {
+                    blogChoiceSuccess = true;
+                } else {
+                    logger.Error("Input beyond range of blogIDs.");
+                }
+            }
+
             break;
 
+
+
             case '4':
+            Console.Clear();
+            logger.Info("User choice - 4) Display Posts");
             // Display blog posts
             break;
-    }
+
+        }
     } while (option == '1' || option == '2' || option == '3' || option == '4');
 }
 catch (Exception ex)
